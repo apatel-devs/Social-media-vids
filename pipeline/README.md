@@ -24,11 +24,23 @@ time it changes.** Nothing else survives.
 - `ekalavya.py` — the 2026-11-02 post: hook, two phone-mockup verse cards,
   YOUR TURN card, CTA. `python3 ekalavya.py png` for the TikTok carousel,
   `python3 ekalavya.py video` for the Instagram reel.
-- `omni_lock_RECONSTRUCTION.py` — @dharmalock_omnipeace lock format.
-  **Rejected by Avi on 2026-11-02** ("absolutely garbage... nothing compared
-  to what we had before"). It was built from a four-line prose description of
-  a format that had actually been iterated across four variants. Do not treat
-  it as the house style. Rebuild against a real posted video from the account
-  and replace this file.
+- `omni_kit.py` — @dharmalock_omnipeace LOCK format. **Measured off a real
+  posted video** (Ambe Ma / Devi Mahatmyam 2), not described from notes: every
+  type size, colour, band position and animation timing in its docstring was
+  read off the reference frame by frame. Serif is EB Garamond; labels, badge,
+  header and handle are Poppins Bold. Ships SILENT — Avi adds a trending sound
+  and posts natively.
+- `omni_ambe_check.py` — re-renders that exact reference post and diffs the
+  vertical position of all 16 text bands against the measured original.
+  **Run it after any change to `omni_kit.py`.** Every band should land within
+  ~5px. This is the regression test for the template.
+- `omni_ekalavya.py` — the 2026-11-02 Omni post, as a worked example of the
+  content shape: struck claim, correction, reframe, "WHAT THE TEXT SAYS"
+  body in two short paragraphs, closing couplet, source badge.
+
+An earlier `omni_lock_RECONSTRUCTION.py` was built from a four-line prose
+description and rejected outright. It is deleted. The lesson: a format that
+was iterated over many rounds cannot be recovered from a changelog of
+decisions — recover it from an actual artifact.
 
 Assets all load from `../assets/`.
