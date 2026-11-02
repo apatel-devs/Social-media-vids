@@ -16,14 +16,18 @@ time it changes.** Nothing else survives.
 
 ## Files
 
-- `kit.py` — @dharmalockapp card builders + record/stitch/music.
-  25fps (never 30), HOOK 1.8 / VERSE 4.0 / CTA 2.8, cover at 1150ms,
-  `slideleft` transitions only, music at volume 0.6 with a 1.0s fade.
-  `record_slide()` records the page so the CSS entrance animations are in
-  the clip, and trims to the measured first paint.
-- `ekalavya.py` — the 2026-11-02 post: hook, two phone-mockup verse cards,
-  YOUR TURN card, CTA. `python3 ekalavya.py png` for the TikTok carousel,
-  `python3 ekalavya.py video` for the Instagram reel.
+- `dl_cards.py` — @dharmalockapp template, **measured off the real finished
+  cards committed in this repo** (`images/gita_grief/*.png`, `videos/*.mp4`)
+  after a from-notes rebuild was rejected. Carousel is **1080x1350 (4:5)**,
+  the reel is 1080x1920 @ **25fps**. Cream `#FFFDF9` page, white rounded card
+  at x72-1008/y212-997 r28, temple crop in its bottom-right, brand rust
+  `#C1440E`, Anton 78px headlines split black/rust, body copy 31px *outside*
+  the card, outlined source pill. Verse card sits high (y57-613) with the
+  phone mockup under it.
+- `grief_check.py` — re-renders the real `images/gita_grief` post with
+  `dl_cards` so it can be diffed against the committed originals.
+  **Run it after any change.**
+- `make_ek_cards.py` — the 2026-11-02 Ekalavya carousel, as a worked example.
 - `omni_kit.py` — @dharmalock_omnipeace LOCK format. **Measured off a real
   posted video** (Ambe Ma / Devi Mahatmyam 2), not described from notes: every
   type size, colour, band position and animation timing in its docstring was
