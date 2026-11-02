@@ -97,6 +97,14 @@ def page(struck, correction, reframe, label, paragraphs, closing, badge,
 html,body{{width:{W}px;height:{H}px;}}
 body{{background:#fff;color:{INK};position:relative;overflow:hidden;
       font-family:'Ser',serif;text-align:center;}}
+/* Nothing animates until the recorder adds .go to <body>. Without this the
+   capture starts before the webfonts have painted and the DHARMA LOCK
+   wordmark pops in a frame or two late — the banner has to be constant and
+   outside every transition. */
+/* !important is load-bearing: every animated rule here uses the `animation`
+   shorthand, which resets animation-play-state to `running` and would
+   otherwise win the cascade over a plain paused declaration. */
+body:not(.go) *{{animation-play-state:paused !important;}}
 @keyframes fin{{from{{opacity:0;}}to{{opacity:1;}}}}
 @keyframes vfin{{from{{opacity:0;}}to{{opacity:.6;}}}}
 @keyframes fout{{to{{opacity:0;visibility:hidden;}}}}
@@ -187,6 +195,15 @@ svg.x line.a{{animation-delay:{T_X:.2f}s;}}
 </body></html>"""
 
 
+def _settle(pg):
+    """Block until the fonts are loaded AND two frames have actually been
+    composited, so the static chrome is fully painted before anything moves."""
+    pg.evaluate("document.fonts.ready")
+    pg.wait_for_timeout(250)
+    pg.evaluate("new Promise(r=>requestAnimationFrame("
+                "()=>requestAnimationFrame(r)))")
+
+
 def shot(html, path, at_s):
     """Screenshot the page at a given point on its own timeline."""
     from playwright.sync_api import sync_playwright
@@ -197,6 +214,8 @@ def shot(html, path, at_s):
         pg = b.new_page(viewport={"width": W, "height": H},
                         device_scale_factor=1)
         pg.goto(f"file://{tmp}")
+        _settle(pg)
+        pg.evaluate("document.body.classList.add('go')")
         pg.wait_for_timeout(int(at_s * 1000) + 120)
         pg.screenshot(path=str(path))
         b.close()
@@ -221,8 +240,12 @@ def record(html, path, dur=DUR):
         pg.goto("about:blank")
         pg.wait_for_timeout(260)
         pg.goto(f"file://{tmp}")
+        _settle(pg)
+        # everything above this line is the settled, static page; the clip
+        # starts here, so frame 0 already has the banner on it
         nav = time.time() - t0
-        pg.wait_for_timeout(int(dur * 1000) + 300)
+        pg.evaluate("document.body.classList.add('go')")
+        pg.wait_for_timeout(int(dur * 1000) + 900)
         ctx.close()
         b.close()
     src = next(raw.glob("*.webm"))

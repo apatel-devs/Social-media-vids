@@ -74,6 +74,10 @@ body{background:%s;color:%s;font-family:'Pop',sans-serif;
 .foot .hd{margin-left:auto;font-size:26px;color:%s;font-weight:500;}
 .count{position:absolute;top:104px;right:88px;z-index:4;font-weight:700;
        font-size:28px;color:%s;letter-spacing:.08em;}
+/* Nothing moves until the recorder adds .go to <body>, so the clip never
+   starts mid-paint. !important is load-bearing: the `animation` shorthand
+   used below resets animation-play-state to `running`. */
+body:not(.go) *{animation-play-state:paused !important;}
 @keyframes rise{from{opacity:0;transform:translateY(34px);}
                 to{opacity:1;transform:translateY(0);}}
 @keyframes fadein{from{opacity:0;}to{opacity:1;}}
@@ -203,7 +207,7 @@ def capture_png(html, out_path, settle_s=1.5):
         pg = b.new_page(viewport={"width": W, "height": H},
                         device_scale_factor=1)
         pg.goto(f"file://{tmp}")
-        pg.wait_for_timeout(int(settle_s * 1000))
+        pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(int(settle_s * 1000)); pg.evaluate("document.body.classList.add('go')"); pg.wait_for_timeout(int(settle_s * 1000))
         pg.screenshot(path=str(out_path))
         b.close()
     return out_path
@@ -233,9 +237,16 @@ def record_slide(html, duration_s, out_path):
         t0 = time.time()
         pg.goto("about:blank")
         pg.wait_for_timeout(260)          # warm compositor
-        pg.goto(f"file://{tmp}")          # returns after load, i.e. after the
-        nav = time.time() - t0            # first paint of the real content
-        pg.wait_for_timeout(int(duration_s * 1000) + 260)
+        pg.goto(f"file://{tmp}")
+        # wait for fonts AND two composited frames, so the clip's frame 0 is
+        # the settled page rather than a half-painted one
+        pg.evaluate("document.fonts.ready")
+        pg.wait_for_timeout(250)
+        pg.evaluate("new Promise(r=>requestAnimationFrame("
+                    "()=>requestAnimationFrame(r)))")
+        nav = time.time() - t0
+        pg.evaluate("document.body.classList.add('go')")
+        pg.wait_for_timeout(int(duration_s * 1000) + 900)
         ctx.close()
         b.close()
 

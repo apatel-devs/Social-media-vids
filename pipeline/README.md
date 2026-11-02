@@ -44,3 +44,28 @@ was iterated over many rounds cannot be recovered from a changelog of
 decisions — recover it from an actual artifact.
 
 Assets all load from `../assets/`.
+
+## The paint-gate (both renderers)
+
+Recording starts the moment the browser context is created, so a naive clip
+begins before the webfonts have painted — the DHARMA LOCK banner pops in a
+frame or two late and the whole thing reads as glitchy. Avi caught this on
+2026-11-02: "the dharma lock banner on top should be constant and not a part
+of any transition."
+
+Both `kit.py` and `omni_kit.py` now gate every animation:
+
+    body:not(.go) *{animation-play-state:paused !important;}
+
+and the recorder waits for `document.fonts.ready` plus two composited frames,
+marks that instant as the trim point, and only then adds `.go`. Frame 0 is
+therefore the settled static page with the banner already on it.
+
+**`!important` is load-bearing.** Every animated rule uses the `animation`
+shorthand, which resets `animation-play-state` to `running` and silently wins
+the cascade over a plain paused declaration. Without it the pause does
+nothing and the fades appear to have already finished on frame 0.
+
+Also: the tail wait after the animation must exceed the clip length by ~900ms,
+or ffmpeg trims past the end of the recording and the output comes up short.
+
