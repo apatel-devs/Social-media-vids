@@ -28,6 +28,17 @@ time it changes.** Nothing else survives.
   `dl_cards` so it can be diffed against the committed originals.
   **Run it after any change.**
 - `make_ek_cards.py` — the 2026-11-02 Ekalavya carousel, as a worked example.
+- `dl_reel.py` — the Instagram reel template, measured 2026-11-03 off the
+  real Karwa Chauth reel plus the reels in `videos/`. **The reel is not the
+  carousel scaled up:** 1080x1920 @ 25fps, pure white page (the carousel page
+  is cream), card x32-1050 / y300-1478 r34, Anton 94px hook, outlined pill
+  bottom-left and "check it out ->" bottom-right inside the card, no body
+  paragraph, and the phone mockup scaled 1.37x on verse slides. Slides are
+  joined by **hard cuts, never a crossfade** — each slide plays its own
+  entrance animation and that carries the motion. Measured cut points on the
+  reference: 2.84 / 6.88 / 11.28 / 15.68 / 19.92, i.e. hook 2.84s and ~4.2s
+  per content slide. The reel ends on the question card; no CTA poster.
+- `make_ek_reel.py` — the Ekalavya reel, as a worked example.
 - `omni_kit.py` — @dharmalock_omnipeace LOCK format. **Measured off a real
   posted video** (Ambe Ma / Devi Mahatmyam 2), not described from notes: every
   type size, colour, band position and animation timing in its docstring was
