@@ -98,28 +98,30 @@ FONT_URLS = {
 COVER_TITLE = ["TOP 5 HINDU", "APPS"]
 COVER_SUB = "the ones that actually live on my phone"
 
-# rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2)
+# rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
+#          fraction to crop off the top of the screenshot)
 #
 # The screenshot index is chosen deliberately per app, not left at 0:
-#   * Panchang shot everything in NOVEMBER 2018 and the year is legible on the
-#     calendar, dainika and festivals screens. A stale date contradicts "lives
-#     on my phone". Index 4 (Choghadiya muhurat) is the only screen with no
-#     year on it, and it happens to be what the blurb is about anyway.
+#   * Panchang shot EVERY screen in November 2018 and the year is legible on
+#     all of them. A three-year-old date contradicts "lives on my phone", so
+#     the dated header strip is cropped off index 4 (Choghadiya muhurat) and
+#     the colour-coded muhurat table carries the frame. The app is already
+#     named on the white card above, so losing its title bar costs nothing.
 #   * mySatsang index 0 is a wide marketing panel that reads as empty pink with
 #     a phone falling off the edge, and index 2 is a profile page dominated by
 #     a QR code. Index 3 is the rituals grid. This is the #1 slot - the payoff
 #     frame - so it gets the screen that actually looks like something.
 APPS = [
     (5, 1080562426, "Bhagavad-gita As It Is",
-     ["The whole Gita, verse by verse, with the", "Sanskrit right there. Costs nothing."], 0, False),
+     ["The whole Gita, verse by verse, with the", "Sanskrit right there. Costs nothing."], 0, False, 0.0),
     (4, 1557728556, "Vignanam",
-     ["Every stotra and sahasranamam you grew up", "hearing. Nine languages."], 0, False),
+     ["Every stotra and sahasranamam you grew up", "hearing. Nine languages."], 0, False, 0.0),
     (3, 6761774189, "Dharma Lock",
-     ["Locks your apps until you pray. It is the", "reason I open any of the others."], 0, True),
+     ["Locks your apps until you pray. It is the", "reason I open any of the others."], 0, True, 0.0),
     (2, 1321271821, "Hindu Calendar",
-     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], 4, False),
+     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], 4, False, 0.20),
     (1, 6444313821, "mySatsang",
-     ["If you're Swaminarayan you already have", "this one. It is not close."], 3, False),
+     ["If you're Swaminarayan you already have", "this one. It is not close."], 3, False, 0.0),
 ]
 
 
@@ -259,7 +261,7 @@ def frame_cover(cov, fdir, out):
     return out
 
 
-def frame_rank(bg, rank, meta, blurb, shot_ix, join, fdir, out):
+def frame_rank(bg, rank, meta, blurb, shot_ix, join, crop_top, fdir, out):
     im = bg.copy().convert("RGBA")
     f_num = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 176)
     f_name = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 62)
@@ -297,6 +299,9 @@ def frame_rank(bg, rank, meta, blurb, shot_ix, join, fdir, out):
             x += p.width
     else:
         sheet = Image.open(io.BytesIO(_get(bigger(shots[min(shot_ix, len(shots) - 1)])))).convert("RGB")
+
+    if crop_top > 0:
+        sheet = sheet.crop((0, int(sheet.height * crop_top), sheet.width, sheet.height))
 
     s = min(max_w / sheet.width, (band_bot - band_top) / sheet.height)
     sheet = sheet.resize((int(sheet.width * s), int(sheet.height * s)), Image.LANCZOS)
@@ -346,10 +351,10 @@ def main():
     bg = background(cov)
 
     made = [frame_cover(cov, fdir, out / "eh_1_cover.jpg")]
-    for i, (rank, app_id, name, blurb, shot_ix, join) in enumerate(APPS, start=2):
+    for i, (rank, app_id, name, blurb, shot_ix, join, crop_top) in enumerate(APPS, start=2):
         meta = lookup(app_id)
         meta["name"] = name              # display name, not the long store title
-        made.append(frame_rank(bg, rank, meta, blurb, shot_ix, join, fdir,
+        made.append(frame_rank(bg, rank, meta, blurb, shot_ix, join, crop_top, fdir,
                                out / f"eh_{i}_rank{rank}.jpg"))
         print(f"  {rank}  {name}  {meta['rating']:.2f} / {meta['count']} ratings")
     made.append(frame_cta(poster, out / "eh_7_cta.jpg"))
