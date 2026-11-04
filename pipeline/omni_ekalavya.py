@@ -19,8 +19,10 @@ NOT Abhimanyu — that is the exact post Avi's friend made (@gita.talk), and
 Avi said on 10/29 "I don't want my friend saying I copied him."
 """
 import sys
-sys.path.insert(0, "/home/claude/dl")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import omni_kit as K
+from _guard import preflight
+preflight()
 
 POST = dict(
     struck="THE THUMB WAS DEVOTION.",

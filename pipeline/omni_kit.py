@@ -38,9 +38,10 @@ W, H = 1080, 1920
 FPS = 30
 DUR = 12.0
 
-A = pathlib.Path("/home/claude/dl/assets")
-SF = pathlib.Path("/home/claude/ref/fonts")
-OUT = pathlib.Path("/home/claude/dl/out")
+_REPO = pathlib.Path(__file__).resolve().parent.parent
+A = _REPO / "assets"
+SF = _REPO / "assets"
+OUT = _REPO / "out"
 OUT.mkdir(parents=True, exist_ok=True)
 
 INK = "#111111"

@@ -25,8 +25,9 @@ post and diffs the band positions against the originals.
 """
 import pathlib, base64, subprocess, time, shutil
 
-A = pathlib.Path("/home/claude/dl/assets")
-OUT = pathlib.Path("/home/claude/dl/out")
+_REPO = pathlib.Path(__file__).resolve().parent.parent
+A = _REPO / "assets"
+OUT = _REPO / "out"
 OUT.mkdir(parents=True, exist_ok=True)
 
 W = 1080

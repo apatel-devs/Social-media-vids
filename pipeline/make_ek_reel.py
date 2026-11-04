@@ -1,5 +1,7 @@
-import sys; sys.path.insert(0,"/home/claude")
+import sys; sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import dl_reel as R
+from _guard import preflight
+preflight()
 
 V1_DEV = ["उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।",
           "आत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः॥"]
@@ -35,6 +37,6 @@ if __name__ == "__main__":
             p=R.OUT/f"c{i}.mp4"; R.clip(h,p,d); clips.append(p); print("clip",i)
         R.join(clips, R.OUT/"reel_silent.mp4")
         R.music(R.OUT/"reel_silent.mp4",
-                "/home/claude/smv/assets/audio/vgma-challenge-25.ogg",
+                str(__import__("pathlib").Path(__file__).resolve().parent.parent/"assets"/"audio")+"/vgma-challenge-25.ogg",
                 R.OUT/"dharmalock_ekalavya_REEL.mp4")
         print("done")

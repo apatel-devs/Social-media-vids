@@ -1,7 +1,9 @@
 """Ekalavya for @dharmalockapp, in the real template (dl_cards)."""
 import sys, shutil, pathlib
-sys.path.insert(0,"/home/claude/dl")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import dl_cards as D
+from _guard import preflight
+preflight()
 
 G = lambda *c: [chr(int(x,16)) for x in c]
 V1_DEV = ["उद्धरेदात्मनात्मानं नात्मानमवसादयेत्।",

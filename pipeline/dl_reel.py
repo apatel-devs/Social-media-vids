@@ -22,8 +22,9 @@ The reel is NOT the carousel scaled up. Measured differences:
 """
 import pathlib, base64, subprocess, time, shutil
 
-A = pathlib.Path("/home/claude/smv/assets")
-OUT = pathlib.Path("/home/claude/out")
+_REPO = pathlib.Path(__file__).resolve().parent.parent
+A = _REPO / "assets"
+OUT = _REPO / "out"
 OUT.mkdir(parents=True, exist_ok=True)
 
 W, H = 1080, 1920

@@ -1,7 +1,7 @@
 """Re-render the exact reference post and diff its geometry against the
 real video, so the rebuilt template can be verified rather than eyeballed."""
 import sys
-sys.path.insert(0, "/home/claude/dl")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import omni_kit as K
 import numpy as np
 from PIL import Image
@@ -48,14 +48,10 @@ def bands(path):
 
 
 if __name__ == "__main__":
-    html = K.page(**REF)
-    K.shot(html, K.OUT / "ambe_final.png", 9.0)
+    import omni_kit as K
+    K.shot(K.page(**REF), K.OUT / "ambe_final.png", 9.0)
     got = bands(K.OUT / "ambe_final.png")
-    print(f"{'block':8s} {'target':>12s} {'got':>12s}  dy")
     for i, name in enumerate(NAMES):
-        t = TARGET[i]
-        g = got[i] if i < len(got) else (0, 0)
+        t = TARGET[i]; g = got[i] if i < len(got) else (0, 0)
         print(f"{name:8s} {str(t):>12s} {str(g):>12s}  "
               f"{g[0]-t[0]:+4d}/{g[1]-t[1]:+4d}")
-    if len(got) != len(TARGET):
-        print(f"!! band count {len(got)} vs {len(TARGET)}")

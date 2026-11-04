@@ -1,86 +1,88 @@
 # Build pipeline code
 
-**This folder exists because the render code was lost on 2026-11-02.**
+## Run this before you build or post anything
 
-Finished media was always pushed to this repo; the Python that produced it
-never was. It lived only in an ephemeral container, and when that container
-was wiped, `video_template.py`, `essay_variants.py`, `essay_motion.py`,
-`reel_kit.py` and every `make_*.py` went with it. The project's memory files
-recorded the format *rules* (durations, fps, card order, the lock format's
-description) but not the implementation, so the rebuild below is a
-reconstruction, not a recovery.
+    python3 pipeline/verify.py
 
-`git push` over HTTPS works from the build environment even though
-`gh api` writes are blocked by the proxy. So: **commit the code here every
-time it changes.** Nothing else survives.
+It exits 0 only if every template still renders what it is supposed to.
+Every build script calls it automatically and refuses to run if it fails.
 
-## Files
+**Why this exists.** On 2026-11-02 the build container was wiped. The render
+code had never been committed, so the templates were rebuilt from a few lines
+of prose notes and came out wrong in almost every respect - wrong aspect
+ratio, wrong fonts, wrong structure - and one of those rebuilds was published
+before anyone noticed. Avi, 2026-11-03: *"I need to make sure that posts
+going forward are never changed... It needs to be saved and taken care of."*
 
-- `dl_cards.py` — @dharmalockapp template, **measured off the real finished
-  cards committed in this repo** (`images/gita_grief/*.png`, `videos/*.mp4`)
-  after a from-notes rebuild was rejected. Carousel is **1080x1350 (4:5)**,
-  the reel is 1080x1920 @ **25fps**. Cream `#FFFDF9` page, white rounded card
-  at x72-1008/y212-997 r28, temple crop in its bottom-right, brand rust
-  `#C1440E`, Anton 78px headlines split black/rust, body copy 31px *outside*
-  the card, outlined source pill. Verse card sits high (y57-613) with the
-  phone mockup under it.
-- `grief_check.py` — re-renders the real `images/gita_grief` post with
-  `dl_cards` so it can be diffed against the committed originals.
-  **Run it after any change.**
-- `make_ek_cards.py` — the 2026-11-02 Ekalavya carousel, as a worked example.
-- `dl_reel.py` — the Instagram reel template, measured 2026-11-03 off the
-  real Karwa Chauth reel plus the reels in `videos/`. **The reel is not the
-  carousel scaled up:** 1080x1920 @ 25fps, pure white page (the carousel page
-  is cream), card x32-1050 / y300-1478 r34, Anton 94px hook, outlined pill
-  bottom-left and "check it out ->" bottom-right inside the card, no body
-  paragraph, and the phone mockup scaled 1.37x on verse slides. Slides are
-  joined by **hard cuts, never a crossfade** — each slide plays its own
-  entrance animation and that carries the motion. Measured cut points on the
-  reference: 2.84 / 6.88 / 11.28 / 15.68 / 19.92, i.e. hook 2.84s and ~4.2s
-  per content slide. The reel ends on the question card; no CTA poster.
-- `make_ek_reel.py` — the Ekalavya reel, as a worked example.
-- `omni_kit.py` — @dharmalock_omnipeace LOCK format. **Measured off a real
-  posted video** (Ambe Ma / Devi Mahatmyam 2), not described from notes: every
-  type size, colour, band position and animation timing in its docstring was
-  read off the reference frame by frame. Serif is EB Garamond; labels, badge,
-  header and handle are Poppins Bold. Ships SILENT — Avi adds a trending sound
-  and posts natively.
-- `omni_ambe_check.py` — re-renders that exact reference post and diffs the
-  vertical position of all 16 text bands against the measured original.
-  **Run it after any change to `omni_kit.py`.** Every band should land within
-  ~5px. This is the regression test for the template.
-- `omni_ekalavya.py` — the 2026-11-02 Omni post, as a worked example of the
-  content shape: struck claim, correction, reframe, "WHAT THE TEXT SAYS"
-  body in two short paragraphs, closing couplet, source badge.
+So nothing here depends on anyone remembering anything.
 
-An earlier `omni_lock_RECONSTRUCTION.py` was built from a four-line prose
-description and rejected outright. It is deleted. The lesson: a format that
-was iterated over many rounds cannot be recovered from a changelog of
-decisions — recover it from an actual artifact.
+### How the lock works
 
-Assets all load from `../assets/`.
+`reference/originals/` holds the genuine published artifacts - the real Ambe
+Ma Omni video, the real Karwa Chauth reel, the real gita_grief carousel
+cards. These are the ground truth. They are committed, so no one ever has to
+ask Avi for a previous video again.
 
-## The paint-gate (both renderers)
+`reference/golden/` holds this renderer's own frozen output.
 
-Recording starts the moment the browser context is created, so a naive clip
-begins before the webfonts have painted — the DHARMA LOCK banner pops in a
-frame or two late and the whole thing reads as glitchy. Avi caught this on
-2026-11-02: "the dharma lock banner on top should be constant and not a part
-of any transition."
+`verify.py` re-renders each reference post and checks it twice:
 
-Both `kit.py` and `omni_kit.py` now gate every animation:
+1. **Fidelity** - ink distribution against the real published artifact.
+   Catches a catastrophic rebuild: wrong aspect ratio, missing card, content
+   in the wrong half of the frame.
+2. **Drift lock** - pixel comparison against the committed golden. Strict.
+   Any edit that changes output at all fails here and writes a `DIFF_*.png`
+   into `out/` showing exactly which pixels moved.
 
-    body:not(.go) *{animation-play-state:paused !important;}
+A deliberate change means: look at the diffs, confirm they are right, then
+`python3 pipeline/verify.py --bless`. **Never bless to turn a red check
+green.** The goldens are the contract.
 
-and the recorder waits for `document.fonts.ready` plus two composited frames,
-marks that instant as the trim point, and only then adds `.go`. Frame 0 is
-therefore the settled static page with the banner already on it.
+Paths are resolved relative to the repo, so a fresh `git clone` runs with no
+setup.
 
-**`!important` is load-bearing.** Every animated rule uses the `animation`
-shorthand, which resets `animation-play-state` to `running` and silently wins
-the cascade over a plain paused declaration. Without it the pause does
-nothing and the fades appear to have already finished on frame 0.
+## Templates
 
-Also: the tail wait after the animation must exceed the clip length by ~900ms,
-or ffmpeg trims past the end of the recording and the output comes up short.
+- `dl_cards.py` - @dharmalockapp carousel. **1080x1350 (4:5)**, cream
+  `#FFFDF9` page, white card x72-1008 / y212-997 r28, temple crop bottom
+  right, rust `#C1440E`, Anton 78px headline split black/rust, body copy 31px
+  *outside* the card, outlined source pill. Verse card sits high (y57-613)
+  with the phone mockup under it. Reference post: `images/gita_grief`.
+- `dl_reel.py` - @dharmalockapp Instagram reel. **Not the carousel rescaled.**
+  1080x1920 @ 25fps, white page, card x32-1050 / y300-1478 r34, Anton 94px
+  hook, pill and "check it out ->" inside the card, no body paragraph, phone
+  scaled 1.37x. Slides joined by **hard cuts** - each plays its own entrance
+  animation. Hook 2.84s, content slides ~4.2s. Ends on the question card; no
+  CTA poster. Reference: the Karwa Chauth reel.
+- `omni_kit.py` - @dharmalock_omnipeace LOCK format, measured off the real
+  Ambe Ma post. EB Garamond throughout, Poppins Bold for labels and badge.
+  Ships SILENT; Avi posts it natively for the trending sound.
+- `amy_caption.py` - @amysharma_dharma caption overlay. Poppins Bold 60px /
+  71px, white with a ~7px black stroke, centred, wraps at 780px, block
+  centred ~57% down the frame at the neck/collar line. Measured off the
+  account's own live grid.
 
+## Worked examples
+
+- `make_ek_cards.py`, `make_ek_reel.py` - the Ekalavya carousel and reel
+- `omni_ekalavya.py`, `omni_worry.py` - Omni posts
+- `grief_check.py`, `omni_ambe_check.py` - the reference posts as data
+
+## Standing rules the code must not break
+
+- Nothing enters Post Bridge until Avi approves that specific post.
+- @dharmalockapp TikTok is carousel only, never a video file.
+- @dharmalock_omnipeace ships silent and does not go through Post Bridge.
+- @amysharma_dharma has music baked into BOTH cuts; nothing silent there.
+- Always pass `scheduled_at` explicitly - omitting it publishes immediately.
+- Never post to YouTube.
+
+## The paint-gate (both video renderers)
+
+Recording starts before webfonts paint, so a naive clip pops the header in a
+frame or two late. Both renderers gate every animation behind
+`body:not(.go) *{animation-play-state:paused !important;}` and trim to the
+moment after fonts are ready and two frames have composited. **The
+`!important` is load-bearing** - the `animation` shorthand resets
+`animation-play-state` to `running` and silently wins otherwise. The tail
+wait must exceed the clip by ~900ms or ffmpeg trims past the end.

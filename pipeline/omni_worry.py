@@ -23,8 +23,10 @@ struck out, and what the text actually says underneath. Avi's words are the
 struck claim, which is the most direct use of them available.
 """
 import sys
-sys.path.insert(0, "/home/claude/dl")
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parent))
 import omni_kit as K
+from _guard import preflight
+preflight()
 
 POST = dict(
     struck="WORRY IS A LUXURY.",
