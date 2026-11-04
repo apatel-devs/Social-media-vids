@@ -98,18 +98,26 @@ FONT_URLS = {
 COVER_TITLE = ["TOP 5 HINDU", "APPS"]
 COVER_SUB = "the ones that actually live on my phone"
 
-# rank -> (itunes id, display name, blurb lines, join first two screenshots)
+# rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2)
+#
+# The screenshot index is chosen deliberately per app, not left at 0:
+#   * Panchang ships its grid screen first, showing a NOVEMBER 2018 calendar.
+#     A three-year-old date on screen contradicts "lives on my phone", so the
+#     festivals screen is used instead.
+#   * mySatsang's first screenshot is a wide marketing panel that reads as a
+#     mostly empty pink field with a phone falling off the edge. Index 2 is an
+#     actual screen. This is the #1 slot, the payoff frame - it has to land.
 APPS = [
     (5, 1080562426, "Bhagavad-gita As It Is",
-     ["The whole Gita, verse by verse, with the", "Sanskrit right there. Costs nothing."], False),
+     ["The whole Gita, verse by verse, with the", "Sanskrit right there. Costs nothing."], 0, False),
     (4, 1557728556, "Vignanam",
-     ["Every stotra and sahasranamam you grew up", "hearing. Nine languages."], False),
+     ["Every stotra and sahasranamam you grew up", "hearing. Nine languages."], 0, False),
     (3, 6761774189, "Dharma Lock",
-     ["Locks your apps until you pray. It is the", "reason I open any of the others."], True),
+     ["Locks your apps until you pray. It is the", "reason I open any of the others."], 0, True),
     (2, 1321271821, "Hindu Calendar",
-     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], False),
+     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], 2, False),
     (1, 6444313821, "mySatsang",
-     ["If you're Swaminarayan you already have", "this one. It is not close."], False),
+     ["If you're Swaminarayan you already have", "this one. It is not close."], 2, False),
 ]
 
 
@@ -233,22 +241,23 @@ def frame_cover(cov, fdir, out):
     big = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 128)
     sub = ImageFont.truetype(str(fdir / "Inter.ttf"), 40)
 
-    box = (72, 1086, 1008, 1560)
+    box = (72, 1046, 1008, 1624)
     panel(im, box, r=40)
     d = ImageDraw.Draw(im)
-    y = 1150
+    y = 1112
     for ln in COVER_TITLE:
         d.text((124, y), ln, font=big, fill=INK)
         y += 150
     d.line([(124, y + 26), (300, y + 26)], fill=RULE, width=8)
+    y += 76
     for ln in wrapped(d, COVER_SUB, sub, 820):
-        d.text((124, y + 72), ln, font=sub, fill=(110, 104, 96))
+        d.text((124, y), ln, font=sub, fill=(110, 104, 96))
         y += 54
     im.convert("RGB").save(out, quality=95)
     return out
 
 
-def frame_rank(bg, rank, meta, blurb, join, fdir, out):
+def frame_rank(bg, rank, meta, blurb, shot_ix, join, fdir, out):
     im = bg.copy().convert("RGBA")
     f_num = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 176)
     f_name = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 62)
@@ -285,7 +294,7 @@ def frame_rank(bg, rank, meta, blurb, join, fdir, out):
             sheet.paste(p, (x, 0))
             x += p.width
     else:
-        sheet = Image.open(io.BytesIO(_get(bigger(shots[0])))).convert("RGB")
+        sheet = Image.open(io.BytesIO(_get(bigger(shots[min(shot_ix, len(shots) - 1)])))).convert("RGB")
 
     s = min(max_w / sheet.width, (band_bot - band_top) / sheet.height)
     sheet = sheet.resize((int(sheet.width * s), int(sheet.height * s)), Image.LANCZOS)
@@ -335,10 +344,10 @@ def main():
     bg = background(cov)
 
     made = [frame_cover(cov, fdir, out / "eh_1_cover.jpg")]
-    for i, (rank, app_id, name, blurb, join) in enumerate(APPS, start=2):
+    for i, (rank, app_id, name, blurb, shot_ix, join) in enumerate(APPS, start=2):
         meta = lookup(app_id)
         meta["name"] = name              # display name, not the long store title
-        made.append(frame_rank(bg, rank, meta, blurb, join, fdir,
+        made.append(frame_rank(bg, rank, meta, blurb, shot_ix, join, fdir,
                                out / f"eh_{i}_rank{rank}.jpg"))
         print(f"  {rank}  {name}  {meta['rating']:.2f} / {meta['count']} ratings")
     made.append(frame_cta(poster, out / "eh_7_cta.jpg"))
