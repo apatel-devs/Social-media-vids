@@ -39,7 +39,7 @@ they are right, then regenerate the goldens:
 
 Never bless to make a red check go green. The goldens are the contract.
 """
-import sys, pathlib, subprocess
+import sys, pathlib, json
 import numpy as np
 from PIL import Image, ImageFilter
 
@@ -95,9 +95,15 @@ def _corr(a, b):
 # missing card, content in the wrong half of the frame. Exact drift is the
 # golden layer's job, and that one is strict.
 ROW_MIN, COL_MIN = 0.50, 0.50
+# Absolute floors alone are too loose to protect a --bless: a 40px shift of
+# a whole column still clears them. So each render's correlation against the
+# real post is also recorded in reference/golden/fidelity.json when blessed,
+# and may not fall more than FIDELITY_SLIP below its own baseline.
+FIDELITY_SLIP = 0.05
+FID_FILE = GOLD / "fidelity.json"
 
 
-def compare_bands(name, got_png, ref_png, fails):
+def compare_bands(name, got_png, ref_png, fails, baselines, record):
     """Fidelity: does this still look structurally like the published post?"""
     (gh, gw), grow, gcol = _profile(got_png)
     (rh, rw), rrow, rcol = _profile(ref_png)
@@ -105,9 +111,18 @@ def compare_bands(name, got_png, ref_png, fails):
         fails.append(f"{name}: renders {gw}x{gh}, the real post is {rw}x{rh}")
         return
     r, c = _corr(grow, rrow), _corr(gcol, rcol)
+    record[name] = [round(r, 4), round(c, 4)]
     if r < ROW_MIN or c < COL_MIN:
         fails.append(f"{name}: layout no longer matches the real post "
                      f"(vertical {r:.2f}/{ROW_MIN}, horizontal {c:.2f}/{COL_MIN})")
+        return
+    base = baselines.get(name)
+    if base:
+        br, bc = base
+        if r < br - FIDELITY_SLIP or c < bc - FIDELITY_SLIP:
+            fails.append(f"{name}: drifted away from the real post "
+                         f"(vertical {r:.2f} was {br:.2f}, "
+                         f"horizontal {c:.2f} was {bc:.2f})")
 
 
 def compare_golden(name, got_png, fails):
@@ -159,21 +174,32 @@ def render_all():
 def main():
     bless = "--bless" in sys.argv
     fails = []
+    baselines = json.loads(FID_FILE.read_text()) if FID_FILE.exists() else {}
+    record = {}
     made = render_all()
 
     for name, got, orig in made:
         if orig.exists():
-            compare_bands(name, got, orig, fails)
+            compare_bands(name, got, orig, fails, baselines, record)
 
     if bless:
+        # Blessing is how a deliberate change is accepted. It is NOT a way to
+        # silence a failure: if a render no longer resembles the real
+        # published post, refuse outright rather than freeze the mistake in
+        # as the new contract. That is exactly how a wrong template would
+        # become permanent.
+        if fails:
+            print("REFUSING TO BLESS - these renders no longer match the "
+                  "real published posts:\n")
+            for f in fails:
+                print("  x", f)
+            print("\nFix the template first. Blessing here would make the "
+                  "break the new baseline.")
+            return 1
         for _, got, _o in made:
             Image.open(got).save(GOLD / pathlib.Path(got).name)
+        FID_FILE.write_text(json.dumps(record, indent=2, sort_keys=True))
         print(f"blessed {len(made)} goldens into reference/golden/")
-        if fails:
-            print("\nWARNING - blessed while fidelity checks were failing:")
-            for f in fails:
-                print("  !", f)
-            return 1
         return 0
 
     for name, got, _o in made:

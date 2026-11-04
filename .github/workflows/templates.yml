@@ -1,0 +1,31 @@
+name: template lock
+
+# Runs the template check on every push. If a template drifts, this goes red
+# before anything gets built from it, instead of after a wrong post is live.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: install
+        run: |
+          python -m pip install --quiet --upgrade pip
+          python -m pip install --quiet playwright numpy pillow
+          python -m playwright install --with-deps chromium
+      - name: verify templates
+        run: python3 pipeline/verify.py
+      - name: upload diffs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: template-diffs
+          path: out/DIFF_*.png
+          if-no-files-found: ignore
