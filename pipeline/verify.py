@@ -41,7 +41,7 @@ Never bless to make a red check go green. The goldens are the contract.
 """
 import sys, pathlib, subprocess
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 ORIG = REPO / "reference" / "originals"
@@ -52,6 +52,11 @@ GOLD.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 PIXEL_TOL = 2.0     # mean abs 0-255 difference allowed against a golden
+# Different Chromium builds antialias text slightly differently, which showed
+# up as mean ~2.2 between two machines running identical code. Both sides are
+# softened before diffing so sub-pixel AA collapses while any real move -
+# a changed size, colour or position - still registers far above the tolerance.
+COMPARE_BLUR = 1.6
 
 
 def _profile(path):
@@ -110,8 +115,11 @@ def compare_golden(name, got_png, fails):
     if not gp.exists():
         fails.append(f"{name}: no golden committed ({gp.name}) - run --bless")
         return
-    a = np.asarray(Image.open(got_png).convert("RGB")).astype(int)
-    b = np.asarray(Image.open(gp).convert("RGB")).astype(int)
+    def soft(path):
+        im = Image.open(path).convert("RGB")
+        return np.asarray(im.filter(
+            ImageFilter.GaussianBlur(COMPARE_BLUR))).astype(int)
+    a, b = soft(got_png), soft(gp)
     if a.shape != b.shape:
         fails.append(f"{name}: size {a.shape[1]}x{a.shape[0]}, "
                      f"golden is {b.shape[1]}x{b.shape[0]}")
