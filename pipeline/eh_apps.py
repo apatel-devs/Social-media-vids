@@ -101,12 +101,14 @@ COVER_SUB = "the ones that actually live on my phone"
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2)
 #
 # The screenshot index is chosen deliberately per app, not left at 0:
-#   * Panchang ships its grid screen first, showing a NOVEMBER 2018 calendar.
-#     A three-year-old date on screen contradicts "lives on my phone", so the
-#     festivals screen is used instead.
-#   * mySatsang's first screenshot is a wide marketing panel that reads as a
-#     mostly empty pink field with a phone falling off the edge. Index 2 is an
-#     actual screen. This is the #1 slot, the payoff frame - it has to land.
+#   * Panchang shot everything in NOVEMBER 2018 and the year is legible on the
+#     calendar, dainika and festivals screens. A stale date contradicts "lives
+#     on my phone". Index 4 (Choghadiya muhurat) is the only screen with no
+#     year on it, and it happens to be what the blurb is about anyway.
+#   * mySatsang index 0 is a wide marketing panel that reads as empty pink with
+#     a phone falling off the edge, and index 2 is a profile page dominated by
+#     a QR code. Index 3 is the rituals grid. This is the #1 slot - the payoff
+#     frame - so it gets the screen that actually looks like something.
 APPS = [
     (5, 1080562426, "Bhagavad-gita As It Is",
      ["The whole Gita, verse by verse, with the", "Sanskrit right there. Costs nothing."], 0, False),
@@ -115,9 +117,9 @@ APPS = [
     (3, 6761774189, "Dharma Lock",
      ["Locks your apps until you pray. It is the", "reason I open any of the others."], 0, True),
     (2, 1321271821, "Hindu Calendar",
-     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], 2, False),
+     ["Tithi, muhurat, every festival date.", "I check it before I call my mom."], 4, False),
     (1, 6444313821, "mySatsang",
-     ["If you're Swaminarayan you already have", "this one. It is not close."], 2, False),
+     ["If you're Swaminarayan you already have", "this one. It is not close."], 3, False),
 ]
 
 
