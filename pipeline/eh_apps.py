@@ -95,8 +95,17 @@ FONT_URLS = {
         "https://github.com/google/fonts/raw/main/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
 }
 
-COVER_TITLE = ["TOP 5 HINDU", "APPS"]
+# Cover text. Avi 2026-11-04, sending the @swingthoughtsgolf cover as the
+# reference (saved at reference/originals/expandhinduism_FORMAT_REFERENCE_*.png):
+# "use text like the image I showed you, simple text on an image." So the cover
+# is NOT a white card - it is heavy outlined white type sitting straight on the
+# photo, exactly like the golf post. The white rounded boxes stay on the
+# countdown frames, where they carry the app copy.
+COVER_TITLE = "Top 5 Hindu Apps"
 COVER_SUB = "the ones that actually live on my phone"
+COVER_TITLE_PX = 104           # shrinks automatically if a longer title is set
+COVER_SUB_PX = 54
+COVER_TOP = 560                # where the text block starts, as on the golf post
 
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
 #          fraction to crop off the top of the screenshot)
@@ -240,23 +249,38 @@ def wrapped(draw, text, font, max_w):
 
 # ---------------------------------------------------------------- frames
 
-def frame_cover(cov, fdir, out):
-    im = fit_cover(cov).convert("RGBA")
-    big = ImageFont.truetype(str(fdir / "ArchivoBlack.ttf"), 128)
-    sub = ImageFont.truetype(str(fdir / "Inter.ttf"), 40)
+def fit_font(draw, text, path, start_px, max_w, floor_px=40):
+    """Largest size at or below start_px that still fits max_w on one line."""
+    px = start_px
+    while px > floor_px:
+        f = ImageFont.truetype(str(path), px)
+        if draw.textlength(text, font=f) <= max_w:
+            return f
+        px -= 2
+    return ImageFont.truetype(str(path), floor_px)
 
-    box = (72, 1046, 1008, 1624)
-    panel(im, box, r=40)
+
+def centred(d, text, font, y, stroke):
+    """White type with a heavy dark outline, centred - the golf cover's look."""
+    tw = d.textlength(text, font=font)
+    d.text(((W - tw) / 2, y), text, font=font, fill=(255, 255, 255),
+           stroke_width=stroke, stroke_fill=(17, 13, 10))
+
+
+def frame_cover(cov, fdir, out):
+    """Simple outlined text straight on the photo. No card - see COVER_TITLE."""
+    im = fit_cover(cov).convert("RGBA")
     d = ImageDraw.Draw(im)
-    y = 1112
-    for ln in COVER_TITLE:
-        d.text((124, y), ln, font=big, fill=INK)
-        y += 150
-    d.line([(124, y + 26), (300, y + 26)], fill=RULE, width=8)
-    y += 76
-    for ln in wrapped(d, COVER_SUB, sub, 820):
-        d.text((124, y), ln, font=sub, fill=(110, 104, 96))
-        y += 54
+
+    title_f = fit_font(d, COVER_TITLE, fdir / "ArchivoBlack.ttf",
+                       COVER_TITLE_PX, W - 120)
+    sub_f = fit_font(d, COVER_SUB, fdir / "Inter.ttf", COVER_SUB_PX, W - 160)
+
+    y = COVER_TOP
+    centred(d, COVER_TITLE, title_f, y, stroke=13)
+    y += int(title_f.size * 1.30)
+    centred(d, COVER_SUB, sub_f, y, stroke=8)
+
     im.convert("RGB").save(out, quality=95)
     return out
 
