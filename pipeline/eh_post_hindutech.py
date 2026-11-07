@@ -45,7 +45,9 @@ APPS = [
     (3, 6761774189, "Dharma Lock",
      ["Locks your apps until you pray. It is the", "reason I open any of the others."], 0, True, 0.0),
     (2, 930904592, "bliss by Gurudev",
-     ["Art of Living's app. Breathwork and", "guided sits, if that is your thing."], 0, False, 0.0),
+     ["Art of Living's app. Breathwork and", "guided sits for when your head is loud."], 0, False, 0.0),
+    # Neutral on the man himself. This account does not need the argument in
+    # the comments, and the review count makes the case on its own.
     (1, 537568757, "Sadhguru",
-     ["Twenty one thousand ratings. Whatever", "you think of him, the app is good."], 0, False, 0.0),
+     ["Twenty one thousand ratings. The", "biggest thing in this whole category."], 0, False, 0.0),
 ]
