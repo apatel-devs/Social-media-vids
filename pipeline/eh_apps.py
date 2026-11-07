@@ -63,6 +63,7 @@ import io
 import json
 import pathlib
 import subprocess
+import sys
 import urllib.request
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -358,7 +359,25 @@ def main():
     ap.add_argument("--work", default="/home/user/eh")
     ap.add_argument("--poster", default=None,
                     help="cta_full_poster.jpg; defaults to the repo copy")
+    ap.add_argument("--post", default=None,
+                    help="module defining APPS / COVER_TITLE / COVER_SUB for a "
+                         "later post in the series, e.g. eh_post_hindutech. "
+                         "Omitted, the module defaults above build post one, so "
+                         "the first post stays reproducible.")
     a = ap.parse_args()
+
+    # A later post in the series supplies its own list and cover text. The
+    # layout, background treatment and rules stay here so every post in the
+    # series renders identically.
+    if a.post:
+        import importlib
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+        p = importlib.import_module(a.post)
+        g = globals()
+        for key in ("APPS", "COVER_TITLE", "COVER_SUB",
+                    "COVER_TITLE_PX", "COVER_SUB_PX", "COVER_TOP"):
+            if hasattr(p, key):
+                g[key] = getattr(p, key)
 
     work = pathlib.Path(a.work)
     work.mkdir(parents=True, exist_ok=True)
