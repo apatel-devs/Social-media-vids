@@ -400,7 +400,10 @@ def main():
         made.append(frame_rank(bg, rank, meta, blurb, shot_ix, join, crop_top, fdir,
                                out / f"eh_{i}_rank{rank}.jpg"))
         print(f"  {rank}  {name}  {meta['rating']:.2f} / {meta['count']} ratings")
-    made.append(frame_cta(poster, out / "eh_7_cta.jpg"))
+    # The CTA is always the last frame, so its number follows the list length
+    # rather than being hardcoded - a six-app post would otherwise collide with
+    # the last countdown frame and sort before it.
+    made.append(frame_cta(poster, out / f"eh_{len(APPS) + 2}_cta.jpg"))
 
     for p in made:
         print(p)
