@@ -39,7 +39,7 @@ they are right, then regenerate the goldens:
 
 Never bless to make a red check go green. The goldens are the contract.
 """
-import sys, pathlib, json
+import os, sys, pathlib, json
 import numpy as np
 from PIL import Image, ImageFilter
 
@@ -48,6 +48,15 @@ ORIG = REPO / "reference" / "originals"
 GOLD = REPO / "reference" / "golden"
 OUT = REPO / "out"
 OUT.mkdir(exist_ok=True)
+# Two builds started at once each ran preflight(), and both rendered their
+# check frames to the same out/v_*.png paths at the same time. They clobbered
+# each other and BOTH reported that the templates no longer matched, on a tree
+# that was clean (2026-11-07). A false failure is indistinguishable from a real
+# one, which is the fastest way to teach someone to ignore the gate, so each
+# run now renders into its own directory. DIFF_* images stay in out/ where
+# anyone looking for them expects to find them.
+VOUT = OUT / f"_verify_{os.getpid()}"
+VOUT.mkdir(parents=True, exist_ok=True)
 GOLD.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
@@ -155,19 +164,19 @@ def render_all():
 
     made = []
     # carousel - the real gita_grief post
-    C.shot(_g.HOOK, OUT / "v_carousel_hook.png")
-    C.shot(_g.VERSE, OUT / "v_carousel_verse.png")
-    C.shot(_g.REFL, OUT / "v_carousel_refl.png")
-    made += [("carousel hook", OUT / "v_carousel_hook.png", ORIG / "carousel_hook_REAL.png"),
-             ("carousel verse", OUT / "v_carousel_verse.png", ORIG / "carousel_verse_REAL.png"),
-             ("carousel refl", OUT / "v_carousel_refl.png", ORIG / "carousel_refl_REAL.png")]
+    C.shot(_g.HOOK, VOUT / "v_carousel_hook.png")
+    C.shot(_g.VERSE, VOUT / "v_carousel_verse.png")
+    C.shot(_g.REFL, VOUT / "v_carousel_refl.png")
+    made += [("carousel hook", VOUT / "v_carousel_hook.png", ORIG / "carousel_hook_REAL.png"),
+             ("carousel verse", VOUT / "v_carousel_verse.png", ORIG / "carousel_verse_REAL.png"),
+             ("carousel refl", VOUT / "v_carousel_refl.png", ORIG / "carousel_refl_REAL.png")]
 
     # omni - the real Ambe Ma post, locked state and open state
     html = O.page(**_o.REF)
-    O.shot(html, OUT / "v_omni_locked.png", 2.6)
-    O.shot(html, OUT / "v_omni_final.png", 9.0)
-    made += [("omni locked", OUT / "v_omni_locked.png", ORIG / "omni_locked_REAL.png"),
-             ("omni final", OUT / "v_omni_final.png", ORIG / "omni_final_REAL.png")]
+    O.shot(html, VOUT / "v_omni_locked.png", 2.6)
+    O.shot(html, VOUT / "v_omni_final.png", 9.0)
+    made += [("omni locked", VOUT / "v_omni_locked.png", ORIG / "omni_locked_REAL.png"),
+             ("omni final", VOUT / "v_omni_final.png", ORIG / "omni_final_REAL.png")]
     return made
 
 
@@ -219,4 +228,9 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        code = main()
+    finally:
+        import shutil
+        shutil.rmtree(VOUT, ignore_errors=True)
+    sys.exit(code)
