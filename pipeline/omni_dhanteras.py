@@ -19,19 +19,19 @@ from _guard import preflight
 
 POST = dict(
     struck="DHANTERAS IS GOLD DAY.",
-    correction=["It is also the day of",
-                "a physician."],
-    reframe=["He came out of the same",
-             "ocean as Lakshmi. Last."],
+    correction=["They tore up an ocean",
+                "to find one thing."],
+    reframe=["It was never the gold.",
+             "Gold was the easy part."],
     label="WHAT THE TEXT SAYS",
     paragraphs=[
-        ["Lakshmi rose from that churning.",
-         "He rose from it after her."],
-        ["He was holding a pot of amrita.",
-         "Medicine. Not coins, not a chain."],
+        ["Jewels came up. A horse. An elephant.",
+         "A tree that grants wishes."],
+        ["Then Dhanvantari, god of medicine,",
+         "rose holding amrita. Then the war."],
     ],
-    closing=["Buy the gold if you want it.",
-             "You cannot re-buy your health."],
+    closing=["Gold you can buy again tomorrow.",
+             "Health is the wealth you cannot."],
     badge="BHAGAVATA PURANA 8.8.33",
 )
 

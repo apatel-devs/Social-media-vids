@@ -34,20 +34,20 @@ FACT CHECK
 """
 CHIP = "DHANTERAS"
 # Line 3 stays short: the temple crop sits bottom-right of the hook card.
-HEAD = [("THE SAME OCEAN GAVE", False),
-        ("UP LAKSHMI. IT GAVE", False),
-        ("UP A DOCTOR TOO.", True)]
-BODY = ["Yesterday we watched Lakshmi come out of the churned",
-        "ocean. Today belongs to the one who came out last:",
-        "the physician, holding a pot of amrita. Not gold."]
+HEAD = [("THEY TORE UP AN OCEAN", False),
+        ("TO FIND ONE THING.", False),
+        ("IT WASN'T GOLD.", True)]
+BODY = ["Gold came up. Jewels, a horse, a wish-granting tree.",
+        "All of it got divided up. Then Dhanvantari, the god of",
+        "medicine, came up holding amrita, and the war started."]
 PILL = "BHAGAVATA PURANA"
 
 V1 = dict(
     source="BHAGAVATA PURANA",
-    title="He came out holding a pot of amrita",
+    title="The god of medicine, holding a pot of amrita",
     reference="CANTO 8, CHAPTER 8, VERSE 33",
-    gloss=["Everything else the ocean gave up could be worn or spent.",
-           "This one could not. It is the day named after him."],
+    gloss=["This is Dhanvantari, and the day is named after him.",
+           "The demons snatched the pot and ran the moment he rose."],
     devanagari=["स्‍निग्धकुञ्चितकेशान्तसुभग: सिंहविक्रम: ।",
                 "अमृतापूर्णकलसं बिभ्रद् वलयभूषित: ॥"],
     translit="Amritapurna-kalasam bibhrad valaya-bhushitah",
@@ -58,18 +58,18 @@ V2 = dict(
     source="BHAGAVAD GITA",
     title="It works for the one who is not at war with himself",
     reference="CHAPTER 6, VERSE 17",
-    gloss=["Eat normally. Sleep normally. Work normally.",
-           "He says that is the condition, not the warm-up."],
+    gloss=["Gold you can buy again tomorrow. This is the other",
+           "kind of wealth, and it runs on ordinary habits."],
     devanagari=["युक्ताहारविहारस्य युक्तचेष्टस्य कर्मसु ।",
                 "युक्तस्वप्नावबोधस्य योगो भवति दु:खहा ॥"],
     translit="Yuktahara-viharasya yukta-cestasya karmasu",
     translation="For the one whose eating and resting, whose work, whose sleeping and waking are all in measure, this practice is what ends the suffering.",
 )
 
-TURN = ["&ldquo;Dhanteras is the doctor's day",
-        "before it is the gold's.&rdquo;"]
+TURN = ["&ldquo;The war was never",
+        "about the gold.&rdquo;"]
 
-REEL_SUB = "he came out holding medicine."
-REEL_CLOSE = [("BUY THE GOLD.", False),
-              ("THEN GO TO BED", False),
+REEL_SUB = "and that is when the war started."
+REEL_CLOSE = [("YOU BOUGHT THE GOLD.", False),
+              ("NOW GO TO BED", False),
               ("ON TIME.", True)]
