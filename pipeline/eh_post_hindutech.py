@@ -31,13 +31,28 @@ HOW THIS LIST WAS CHOSEN
 """
 
 COVER_TITLE = "Hindu Tech For Everyone"
-COVER_SUB = "six jobs, six apps, all on my phone"
+COVER_SUB = "five jobs, five apps, all on my phone"
 
+# CUT FROM SIX TO FIVE APPS, 2026-11-07, for a posting reason rather than an
+# editorial one. The eight-frame version failed to publish four times, always
+# with TikTok's "took too long to process the upload". Ruled out on the night:
+# payload size (a 1.1MB re-encode failed exactly like the 3.0MB original),
+# malformed frames (all validate 1080x1920 RGB), TikTok being unable to fetch
+# the images (they pull in ~0.15s, HTTP 200, from outside), the account and
+# its connection (post one published fine on the same credentials), and Post
+# Bridge itself (a dharmalockapp carousel published minutes earlier).
+#
+# The one variable left: every carousel that has ever published on any of
+# these accounts was 5 or 7 frames, and the only one that would not go was
+# the 8-frame one. So this drops to 7 frames - the exact shape of post one.
+# Bhajan was the slot to lose: 4.6, the weakest rating of the six.
+#
+# This is inference from a handful of posts, not a documented TikTok limit.
+# If a 7-frame post also fails, the cause is elsewhere and this note is wrong.
+#
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
 #          fraction to crop off the top of the screenshot)
 APPS = [
-    (6, 815022661, "Bhajan",
-     ["Every bhajan and aarti you half know the", "words to. Free, and it downloads."], 0, False, 0.0),
     (5, 1434423184, "Japa 108",
      ["A mala counter that does not lose count", "when your thumb slips."], 0, False, 0.0),
     (4, 562758691, "Live Kirtan",
