@@ -50,6 +50,31 @@ COVER_SUB = "five jobs, five apps, all on my phone"
 # This is inference from a handful of posts, not a documented TikTok limit.
 # If a 7-frame post also fails, the cause is elsewhere and this note is wrong.
 #
+# TESTED 2026-11-08 00:31 UTC. THE 7-FRAME VERSION FAILED THE SAME WAY.
+# Post 64e953b0-a06b-4a64-bc77-9d1a82b5fedc, 7 frames, 1,179,678 bytes, all
+# seven PUT returning 200: status went to "failed" after ~28 minutes with the
+# same "TikTok took too long to process the upload". So frame count is NOT the
+# cause and the five apps here are now just an editorial choice, not a fix.
+#
+# What that leaves, since Post Bridge, the credentials and the frames are all
+# accounted for: TikTok's own side is accepting the upload and then never
+# reporting it finished. Five attempts on this account have now timed out this
+# way (post ids 6c6b4e8f, c2934d11, 51e72dd0, 6fcdabca, 64e953b0), while post
+# one (be05af5b, 2026-11-05) published through the same path in the normal
+# time. The leading guess is that this account is being held - new account,
+# app-promotion content, and every attempt reusing a cover image that is
+# byte-identical to the one already published, which is what duplicate
+# detection looks for. Untested. Do not retry a sixth time on the same cover
+# without checking the TikTok inbox first: the error says the upload may still
+# complete on TikTok's end, so there may be queued copies sitting there.
+#
+# Next things to try, cheapest first:
+#   1. Avi checks the @expandhinduism TikTok inbox and drafts for held copies.
+#   2. A fresh cover photo rather than the pinned series cover.
+#   3. platform_configurations.tiktok.draft = true, so TikTok only has to
+#      accept the upload and not publish it, and Avi posts from the app.
+#   4. Posting it by hand from the phone.
+#
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
 #          fraction to crop off the top of the screenshot)
 APPS = [
