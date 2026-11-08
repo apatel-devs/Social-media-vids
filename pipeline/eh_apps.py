@@ -108,6 +108,19 @@ COVER_TITLE_PX = 104           # shrinks automatically if a longer title is set
 COVER_SUB_PX = 54
 COVER_TOP = 560                # where the text block starts, as on the golf post
 
+# THIS LIST IS THE SERIES CAST. Avi, 2026-11-08: "keep the same exact apps and
+# the pics from our first post. We don't need any new ones everytime." So these
+# five apps, this cover photo and these screenshots carry the whole series, and
+# a new post changes the title, the angle and the blurb copy rather than the
+# cast. Do not go shopping for new apps or generate a new cover for post N.
+#
+# That settles an open question the hard way: after the Hindu-tech post failed
+# to publish five times, the leading suspect was TikTok duplicate detection on
+# a byte-identical cover, and the plan was a fresh cover per post. Reusing the
+# imagery is the format, so that fix is off the table. If the API path keeps
+# timing out on this account, the post goes up by hand or as a TikTok draft -
+# the frames do not change to satisfy the pipe.
+#
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
 #          fraction to crop off the top of the screenshot)
 #
@@ -335,9 +348,14 @@ def frame_rank(bg, rank, meta, blurb, shot_ix, join, crop_top, fdir, out):
     shadow(im, (sx, sy, sx + sheet.width, sy + sheet.height), 28, blur=34, alpha=105, dy=14)
     im.alpha_composite(rounded(sheet, 28), (sx, sy))
 
-    # rating ON the photo, outlined white - never in a third box
+    # rating ON the photo, outlined white - never in a third box.
+    # Stars only. Avi, 2026-11-08: "just show stars we don't need to show how
+    # many people reviewed." So no review count here and no blurb may argue
+    # from one either - the #1 slot used to lean on "twenty one thousand
+    # ratings" and that kind of line has to be rewritten, not just unprinted.
+    # The live lookup still runs: the rating itself goes stale.
     d = ImageDraw.Draw(im)
-    line = f"★ {meta['rating']:.1f}   {meta['count']:,} ratings"
+    line = f"★ {meta['rating']:.1f}"
     tw = d.textlength(line, font=f_rate)
     d.text(((W - tw) / 2, 1706), line, font=f_rate, fill=(255, 255, 255),
            stroke_width=6, stroke_fill=(38, 28, 20))
