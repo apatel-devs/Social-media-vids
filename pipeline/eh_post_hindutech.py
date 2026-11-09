@@ -50,6 +50,31 @@ COVER_SUB = "five jobs, five apps, all on my phone"
 # This is inference from a handful of posts, not a documented TikTok limit.
 # If a 7-frame post also fails, the cause is elsewhere and this note is wrong.
 #
+# ============================================================================
+# 2026-11-09: EVERYTHING BELOW THIS LINE WAS WRONG. THE POSTS PUBLISHED.
+#
+# Avi: "it kept failing in post bridge but then posted 5 times so I deleted
+# them." TikTok was accepting and publishing every one of these uploads.
+# Post Bridge's "TikTok took too long to process the upload" is a
+# CONFIRMATION TIMEOUT, not a failure - it gives up waiting for TikTok to
+# report back, marks the post failed, and the post goes live anyway.
+#
+# So the frames were never the problem, the frame count was never the
+# problem, and the account was never held. We spent two days diagnosing a
+# reporting bug, and the only real damage was five duplicate posts on
+# @expandHinduism that Avi had to delete by hand.
+#
+# THE RULE THAT MATTERS NOW: on this account, a reported failure is not a
+# failure. Do NOT re-post, do NOT rebuild, do NOT "try 7 frames instead."
+# Wait, then check the live profile. The error message says this itself -
+# "It may still complete on TikTok's end" - and it was taken as boilerplate.
+#
+# The reasoning below is kept rather than deleted so the next session can see
+# how a confident, well-evidenced diagnosis went wrong: every ruled-out
+# suspect was ruled out correctly, and the conclusion was still false,
+# because the one thing never questioned was whether "failed" meant failed.
+# ============================================================================
+#
 # TESTED 2026-11-08 00:31 UTC. THE 7-FRAME VERSION FAILED THE SAME WAY.
 # Post 64e953b0-a06b-4a64-bc77-9d1a82b5fedc, 7 frames, 1,179,678 bytes, all
 # seven PUT returning 200: status went to "failed" after ~28 minutes with the
