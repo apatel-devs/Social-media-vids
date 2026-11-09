@@ -140,11 +140,31 @@ def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
          "-map", "[v]", "-an", "-c:v", "libx264", "-preset", "medium",
          "-crf", "18", "-pix_fmt", "yuv420p", "-y", str(react)])
 
+    # The CTA source is ALREADY 1080x1920 at 30fps, so re-encoding it only
+    # cost quality and time. Worse, at preset medium it ran over a minute and
+    # was the step the Cloudflare 502s kept killing - twice on 2026-11-08 and
+    # twice again on 11-09 - each time leaving a truncated _cta.mp4 whose only
+    # symptom is "moov atom not found" three steps later. So: stream-copy when
+    # the geometry already matches, and use a fast preset when it does not.
     cta_n = work / "_cta.mp4"
-    run(["ffmpeg", "-v", "error", "-i", str(cta), "-vf", FIT,
-         "-c:v", "libx264", "-preset", "medium", "-crf", "18",
-         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
-         "-ar", "44100", "-ac", "2", "-y", str(cta_n)])
+    geom = probe(cta, entries="stream=width,height,r_frame_rate").split("\n")
+    if geom and geom[0].strip() == f"{W},{H},{FPS}/1":
+        run(["ffmpeg", "-v", "error", "-i", str(cta), "-c", "copy",
+             "-y", str(cta_n)])
+    else:
+        run(["ffmpeg", "-v", "error", "-i", str(cta), "-vf", FIT,
+             "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
+             "-ar", "44100", "-ac", "2", "-y", str(cta_n)])
+    # Fail here, loudly, rather than three steps downstream. A killed encode
+    # leaves a file with no moov atom; ffprobe then exits non-zero or returns
+    # nothing, and the old code only found out at the concat.
+    try:
+        float(probe(cta_n, entries="format=duration"))
+    except (subprocess.CalledProcessError, ValueError):
+        raise RuntimeError(
+            f"{cta_n} is truncated or unreadable - the encode was killed. "
+            "Delete it and re-run; nothing upstream needs redoing.")
 
     # Reaction clips carry no audio; concat needs a matching layout.
     react_a = work / "_react_a.mp4"
