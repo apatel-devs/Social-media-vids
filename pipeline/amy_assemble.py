@@ -93,7 +93,12 @@ CLIP_IDS = {
     "black hair 3j.MOV": "1Zy_hShwasSR_Mmn5ScYVkLcPVJPVzrAn",
 }
 
-MUSIC = REPO / "assets" / "audio" / "week-5---seven-reasons-why-melody.ogg"
+# The bed track. It was hardcoded to week-5 and so went out on three Amy
+# reels in a row before Avi caught it on 2026-11-08: "don't use the same
+# music you have been for the past 3 reels. Use something upbeat." Pass
+# --music on every build and check what the last post used first; the
+# no-repeat rule in the concept log applies to this account too.
+MUSIC_DEFAULT = "sketchbook-2024-08-01.ogg"   # playful/energetic, 128bpm
 MUSIC_VOL = 0.55          # sits under the CTA's own voiceover without burying it
 SPLIT_THRESHOLD = 7.0     # seconds; at or above this the clip becomes two posts
 
@@ -124,7 +129,9 @@ def fetch(file_id, dest):
     return dest
 
 
-def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path(".")):
+def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
+          music=None):
+    music = music or (REPO / "assets" / "audio" / MUSIC_DEFAULT)
     react = work / "_react.mp4"
     # No transpose: the rotation metadata is applied for us.
     cut = ["-ss", str(start)] + (["-to", str(end)] if end else [])
@@ -154,7 +161,7 @@ def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path(".")):
 
     dur = float(probe(joined))
     run(["ffmpeg", "-v", "error", "-i", str(joined),
-         "-stream_loop", "-1", "-i", str(MUSIC),
+         "-stream_loop", "-1", "-i", str(music),
          "-filter_complex",
          f"[1:a]volume={MUSIC_VOL},atrim=0:{dur:.3f},afade=t=in:st=0:d=0.4,"
          f"afade=t=out:st={max(dur - 0.5, 0):.3f}:d=0.5[m];"
@@ -174,7 +181,19 @@ def main():
                     help="one overlay line; repeat the flag per line")
     ap.add_argument("--out", required=True)
     ap.add_argument("--work", default=".")
+    ap.add_argument("--music", default=None,
+                    help="bed track filename in assets/audio, or a full path. "
+                         f"Defaults to {MUSIC_DEFAULT}. Pick one the last few "
+                         "posts did not use.")
     a = ap.parse_args()
+
+    music = None
+    if a.music:
+        music = pathlib.Path(a.music)
+        if not music.exists():
+            music = REPO / "assets" / "audio" / a.music
+        if not music.exists():
+            raise SystemExit(f"no such track: {a.music}")
 
     work = pathlib.Path(a.work)
     work.mkdir(parents=True, exist_ok=True)
@@ -191,7 +210,7 @@ def main():
     import amy_caption as AC
     cap = AC.caption_png(a.line, work / "_cap.png", w=W, h=H)
 
-    out = build(clip, cta, cap, work / a.out, a.start, a.end, work)
+    out = build(clip, cta, cap, work / a.out, a.start, a.end, work, music)
     print(out, probe(out), "s")
 
 
