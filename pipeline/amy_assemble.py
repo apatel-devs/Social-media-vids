@@ -140,22 +140,26 @@ def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
          "-map", "[v]", "-an", "-c:v", "libx264", "-preset", "medium",
          "-crf", "18", "-pix_fmt", "yuv420p", "-y", str(react)])
 
-    # The CTA source is ALREADY 1080x1920 at 30fps, so re-encoding it only
-    # cost quality and time. Worse, at preset medium it ran over a minute and
-    # was the step the Cloudflare 502s kept killing - twice on 2026-11-08 and
-    # twice again on 11-09 - each time leaving a truncated _cta.mp4 whose only
-    # symptom is "moov atom not found" three steps later. So: stream-copy when
-    # the geometry already matches, and use a fast preset when it does not.
+    # ALWAYS re-encode the CTA, with the same encoder settings as the reaction
+    # clip above. Do not "optimise" this into a stream copy.
+    #
+    # On 2026-11-09 it was switched to -c copy, on the correct observation that
+    # the CTA source is already 1080x1920 at 30fps. That broke the next build:
+    # a stream copy keeps the SOURCE's timebase, the reaction clip carries the
+    # encoder's, and concatenating two files with mismatched timebases under
+    # -c copy produces garbage timestamps. The output had the right 813 frames
+    # and claimed to be 29 minutes long. Nothing errors - it just silently
+    # produces an unpostable file, which is the worst kind of bug to leave in
+    # a pipeline that runs unattended.
+    #
+    # preset veryfast is the real fix for the original complaint: it takes
+    # about 19s where medium took over a minute, which is what kept the
+    # Cloudflare 502s killing this step and leaving a truncated _cta.mp4.
     cta_n = work / "_cta.mp4"
-    geom = probe(cta, entries="stream=width,height,r_frame_rate").split("\n")
-    if geom and geom[0].strip() == f"{W},{H},{FPS}/1":
-        run(["ffmpeg", "-v", "error", "-i", str(cta), "-c", "copy",
-             "-y", str(cta_n)])
-    else:
-        run(["ffmpeg", "-v", "error", "-i", str(cta), "-vf", FIT,
-             "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
-             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
-             "-ar", "44100", "-ac", "2", "-y", str(cta_n)])
+    run(["ffmpeg", "-v", "error", "-i", str(cta), "-vf", FIT,
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "18",
+         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
+         "-ar", "44100", "-ac", "2", "-y", str(cta_n)])
     # Fail here, loudly, rather than three steps downstream. A killed encode
     # leaves a file with no moov atom; ffprobe then exits non-zero or returns
     # nothing, and the old code only found out at the concat.
@@ -179,7 +183,19 @@ def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
     run(["ffmpeg", "-v", "error", "-f", "concat", "-safe", "0",
          "-i", str(lst), "-c", "copy", "-y", str(joined)])
 
+    # Sanity-check the join before the music goes on. A timebase mismatch
+    # between the two inputs yields the right frames with nonsense timestamps,
+    # and nothing upstream errors - see the CTA note above. Catch it here,
+    # where the cause is still obvious.
     dur = float(probe(joined))
+    expected = float(probe(react_a)) + float(probe(cta_n))
+    if abs(dur - expected) > 1.0:
+        raise RuntimeError(
+            f"{joined} is {dur:.1f}s but its parts are {expected:.1f}s. The "
+            "concat produced broken timestamps - the two inputs almost "
+            "certainly have mismatched timebases. Re-encode both with the "
+            "same settings rather than stream-copying either one.")
+
     run(["ffmpeg", "-v", "error", "-i", str(joined),
          "-stream_loop", "-1", "-i", str(music),
          "-filter_complex",
