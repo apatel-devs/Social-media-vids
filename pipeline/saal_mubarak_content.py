@@ -29,12 +29,20 @@ FACT CHECK
 """
 CHIP = "SAAL MUBARAK"
 # Line 3 stays short: the temple crop sits bottom-right of the hook card.
-HEAD = [("YOUR LIST FROM LAST", False),
-        ("YEAR IS STILL", False),
-        ("IN YOUR NOTES APP.", True)]
-BODY = ["Saal Mubarak. This is Vikram Samvat 2083. Two",
-        "thousand and eighty three new years, and not one",
-        "was ever won by the list somebody wrote on day one."]
+# HOOK REPLACED 2026-11-10. Avi: "Why can you also use the same caption for
+# dharma lock? New year new me?" He was right and the first version had it
+# backwards. "New year, new me" is the phrase every viewer already knows, and
+# it went onto Omni only because the struck-line mechanic is native to that
+# format - which put the strongest hook on the weakest account. Omni runs
+# 0-1% like rates; this account runs about 4%. The carousel carries the line
+# without needing a strikethrough, and the notes-app detail moves down into
+# the body where it still does its work.
+HEAD = [("NEW YEAR, NEW ME.", False),
+        ("YOU SAID THAT", False),
+        ("LAST YEAR TOO.", True)]
+BODY = ["Saal Mubarak. The list is still in your notes app.",
+        "Two thousand and eighty three new years, and not",
+        "one was ever won by the list written on day one."]
 PILL = "BHAGAVAD GITA"
 
 V1 = dict(
