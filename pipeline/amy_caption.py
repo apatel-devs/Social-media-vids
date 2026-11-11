@@ -23,6 +23,13 @@ Rules this must keep (from the account's standing notes, not from the image):
   * music baked into BOTH the Instagram and TikTok cuts - nothing ships
     silent on this account unless Avi says he is posting that one himself
   * captions on the post itself stay short, in her voice, no pitch
+  * OVERLAY VOICE: POV framing, and keep it to one short thought. Avi,
+    2026-11-10, on a narrative three-liner: "the captions on the girls face
+    for Amy is not great either. Why not something like 'POV: finally found
+    this app during new years #saalMubarak'". So: open with "POV:", say the
+    one thing, and put the day's hashtag in the overlay rather than only in
+    the post caption. Narration about how she feels is not the register -
+    the two best-performing posts on this account are both plain discovery.
 
 Renders a transparent PNG the size of the frame; composite it with
 ffmpeg overlay so the caption never re-encodes the reaction underneath more
