@@ -23,7 +23,14 @@ Rules this must keep (from the account's standing notes, not from the image):
   * music baked into BOTH the Instagram and TikTok cuts - nothing ships
     silent on this account unless Avi says he is posting that one himself
   * captions on the post itself stay short, in her voice, no pitch
-  * OVERLAY VOICE: POV framing, and keep it to one short thought. Avi,
+  * OVERLAY VOICE: one short thought, and VARY THE OPENER. Avi,
+    2026-11-12: "I see that you have been using the same reaction for the
+    last 3 posts" - the POV formula below went stale in two days. Discovery
+    is the register; "POV:" is only one way into it, and a plain reaction
+    line ("ok i'm actually keeping this one", "genuinely did not expect
+    that") is what the two best-performing posts on this account used. Check
+    the last two posts before writing a third.
+  * The rule that formula came from, kept for the reasoning. Avi,
     2026-11-10, on a narrative three-liner: "the captions on the girls face
     for Amy is not great either. Why not something like 'POV: finally found
     this app during new years #saalMubarak'". So: open with "POV:", say the

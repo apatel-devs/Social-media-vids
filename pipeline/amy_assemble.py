@@ -17,9 +17,22 @@ sandbox can, and these files are reachable by link:
 
     https://drive.google.com/uc?export=download&id=<FILE_ID>
 
-Reaction clips, creator 3 ("black hair"), Drive folder
-1xIZ4QYAQwHQRBP1MxWeGmqrOdQhHPHqS - work through them IN ORDER, a then b
-then c; Avi 2026-10-27: "Start with 3 in order. Don't slip around."
+THE PACK HAS SEVEN CREATORS, NOT ONE. "100 UGC Reactions Pack",
+Drive folder 1igdcapsIM3DrAaYfGI0zzK0ur6NAVvJi, holds subfolders
+1, 1a, 2, 2a, 3, 4 and 5 - a different person in each.
+
+    3  "black hair"  1xIZ4QYAQwHQRBP1MxWeGmqrOdQhHPHqS   (3a - 3j)
+    4  "brunette"    1dTt6b76pvJkOGat2JfJRKpYfJRR32urW   (1a - 1w, 23 clips)
+
+Avi, 2026-10-27, said "Start with 3 in order. Don't slip around", and that
+was read as "only ever use 3". By 2026-11-12 three posts running were the
+same woman in the same outfit in the same salon, and Avi caught it: "I see
+that you have been using the same reaction for the last 3 posts."
+
+So: in order WITHIN a creator, but rotate the creator between posts. Never
+ship two consecutive posts from the same folder, and never the same shoot
+three times. Only folders 3 and 4 have been catalogued; 1, 1a, 2, 2a and 5
+are unexplored.
 
 CTA clips live in a different folder, 1tm90thYotmpm_XWS9Ath-NNkERAxUM4v,
 as cta 1-5.mp4. Avi picked **cta 1.mp4** on 2026-11-05. Do not swap it
