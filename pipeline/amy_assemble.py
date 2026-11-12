@@ -230,6 +230,13 @@ def main():
                     help="one overlay line; repeat the flag per line")
     ap.add_argument("--out", required=True)
     ap.add_argument("--work", default=".")
+    ap.add_argument("--y", type=float, default=None,
+                    help="overlay centre as a fraction of frame height. "
+                         "Defaults to amy_caption.DEFAULT_Y (0.57), measured "
+                         "off creator 3, who is framed wide. Creator 4 sits "
+                         "much closer to camera, so 0.57 puts the text on her "
+                         "chin - use about 0.66 there. Check a frame before "
+                         "posting any clip from a creator you have not used.")
     ap.add_argument("--music", default=None,
                     help="bed track filename in assets/audio, or a full path. "
                          f"Defaults to {MUSIC_DEFAULT}. Pick one the last few "
@@ -257,7 +264,9 @@ def main():
     import sys
     sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     import amy_caption as AC
-    cap = AC.caption_png(a.line, work / "_cap.png", w=W, h=H)
+    cap = (AC.caption_png(a.line, work / "_cap.png", w=W, h=H, y_frac=a.y)
+           if a.y is not None else
+           AC.caption_png(a.line, work / "_cap.png", w=W, h=H))
 
     out = build(clip, cta, cap, work / a.out, a.start, a.end, work, music)
     print(out, probe(out), "s")
