@@ -196,6 +196,32 @@ svg.x line.a{{animation-delay:{T_X:.2f}s;}}
 </body></html>"""
 
 
+def _check_struck_fits(pg):
+    """The struck line is `white-space:nowrap` at 62px inside a column that is
+    only 920px wide, so a long one runs straight off the side of the frame and
+    NOTHING ERRORS - it just renders with the last word missing.
+
+    Avi caught exactly that on 2026-11-14: "For Omni the word addicted is cut
+    off", on "IT'S THE KIDS WHO ARE ADDICTED." (31 characters). Every struck
+    line that has ever shipped was 26 characters or fewer, which is why this
+    had never bitten before.
+
+    Measured, not guessed: this compares the laid-out width of the line
+    against the column it has to sit in, so it stays correct if the font or
+    the column ever changes. Wrapping instead would break the X that is drawn
+    across the line, and shrinking the font would break the template lock, so
+    the right answer is to fail loudly and make the writer shorten the line."""
+    w = pg.evaluate("""() => {
+        const s = document.querySelector('.struck');
+        const c = document.querySelector('.col');
+        return s && c ? [s.scrollWidth, c.clientWidth, s.textContent] : null;
+    }""")
+    if w and w[0] > w[1]:
+        raise RuntimeError(
+            f"struck line is {w[0]}px wide but the column is only {w[1]}px - "
+            f"it would render with the end cut off. Shorten it:\n  {w[2]!r}")
+
+
 def _settle(pg):
     """Block until the fonts are loaded AND two frames have actually been
     composited, so the static chrome is fully painted before anything moves."""
@@ -203,6 +229,7 @@ def _settle(pg):
     pg.wait_for_timeout(250)
     pg.evaluate("new Promise(r=>requestAnimationFrame("
                 "()=>requestAnimationFrame(r)))")
+    _check_struck_fits(pg)
 
 
 def shot(html, path, at_s):

@@ -23,7 +23,11 @@ import omni_kit as K
 from _guard import preflight
 
 POST = dict(
-    struck="IT'S THE KIDS WHO ARE ADDICTED.",
+    # Was "IT'S THE KIDS WHO ARE ADDICTED." - 31 characters, which ran off the
+    # side of the frame and lost the last word. Avi, 2026-11-14: "For Omni the
+    # word addicted is cut off". omni_kit now measures this and refuses to
+    # render an overlong one; keep struck lines to roughly 26 characters.
+    struck="THE KIDS ARE ADDICTED.",
     correction=["You handed them the iPad.",
                 "You were already on yours."],
     reframe=["Nobody is born knowing",
