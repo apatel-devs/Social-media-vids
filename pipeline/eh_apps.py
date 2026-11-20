@@ -114,6 +114,25 @@ COVER_TOP = 560                # where the text block starts, as on the golf pos
 # a new post changes the title, the angle and the blurb copy rather than the
 # cast. Do not go shopping for new apps or generate a new cover for post N.
 #
+# RANKING RULE, CURRENT AS OF 2026-11-20 - READ THIS, NOT THE OLDER POST
+# MODULES. Avi: "Switch the order any of the apps except dharmalock, cover and
+# cta." So:
+#
+#   * Dharma Lock is pinned at #3. Still his call, and now the ONLY fixed
+#     position - a competitor at #1 is what buys the list its credibility.
+#   * The other four may be ranked in ANY order.
+#   * The cover and the CTA frame do not change.
+#
+# This SUPERSEDES the rule that mySatsang could never rank below #2, which held
+# from 11/05 to 11/19 on the reasoning that a low placement would burn the
+# Gujarati audience - the segment most likely to share. Avi lifted it himself
+# once the arrangements started running short. Every eh_post_* module written
+# before 11/20 states the old rule in its docstring; those are a record of what
+# was true when they were built, not instructions for a new post.
+#
+# Net effect: 4! = 24 legal orders rather than 12, seven of them spent by
+# 11/20. See claude/expandhinduism-countdown-format.md for the ledger of which.
+#
 # That settles an open question the hard way: after the Hindu-tech post failed
 # to publish five times, the leading suspect was TikTok duplicate detection on
 # a byte-identical cover, and the plan was a fresh cover per post. Reusing the
