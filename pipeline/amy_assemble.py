@@ -143,8 +143,11 @@ def fetch(file_id, dest):
 
 
 def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
-          music=None):
-    music = music or (REPO / "assets" / "audio" / MUSIC_DEFAULT)
+          music=None, no_music=False):
+    # music=None means "use the default bed"; no_music=True means no bed at
+    # all, keeping only the CTA's own audio. The two are deliberately separate
+    # so that forgetting --music can never silently ship a track-free cut.
+    music = None if no_music else (music or (REPO / "assets" / "audio" / MUSIC_DEFAULT))
     react = work / "_react.mp4"
     # No transpose: the rotation metadata is applied for us.
     cut = ["-ss", str(start)] + (["-to", str(end)] if end else [])
@@ -209,6 +212,25 @@ def build(clip, cta, cap_png, out, start=0.0, end=None, work=pathlib.Path("."),
             "certainly have mismatched timebases. Re-encode both with the "
             "same settings rather than stream-copying either one.")
 
+    # NO BED TRACK. Avi, 2026-11-21: "can you use no audio but don't mute it.
+    # Use the natural ones."
+    #
+    # That is not the same as a silent cut. The reaction clip has no audio
+    # track at all, so its half is silence either way; the CTA carries its own
+    # voiceover, and THAT is what has to survive. So this keeps the joined
+    # audio exactly as it is rather than stripping it - an -an here would kill
+    # the CTA voiceover and give TikTok a file with no audio stream, which is
+    # the "muted" outcome he explicitly did not want.
+    #
+    # This relaxes the standing rule that nothing ships silent on this account
+    # (music was baked into both cuts in exchange for hands-off scheduling).
+    # It is per-post, not the new default: pass --no-music when he asks.
+    if music is None:
+        run(["ffmpeg", "-v", "error", "-i", str(joined),
+             "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+             "-ar", "44100", "-ac", "2", "-y", str(out)])
+        return out
+
     run(["ffmpeg", "-v", "error", "-i", str(joined),
          "-stream_loop", "-1", "-i", str(music),
          "-filter_complex",
@@ -241,7 +263,16 @@ def main():
                     help="bed track filename in assets/audio, or a full path. "
                          f"Defaults to {MUSIC_DEFAULT}. Pick one the last few "
                          "posts did not use.")
+    ap.add_argument("--no-music", action="store_true",
+                    help="ship with no bed track, keeping only the CTA's own "
+                         "voiceover. The reaction half is silent because those "
+                         "clips carry no audio track. This is NOT a muted cut - "
+                         "the file still has an audio stream. Avi asked for it "
+                         "on 2026-11-21; it is per-post, not the new default.")
     a = ap.parse_args()
+
+    if a.no_music and a.music:
+        raise SystemExit("--no-music and --music are mutually exclusive")
 
     music = None
     if a.music:
@@ -268,7 +299,8 @@ def main():
            if a.y is not None else
            AC.caption_png(a.line, work / "_cap.png", w=W, h=H))
 
-    out = build(clip, cta, cap, work / a.out, a.start, a.end, work, music)
+    out = build(clip, cta, cap, work / a.out, a.start, a.end, work, music,
+                no_music=a.no_music)
     print(out, probe(out), "s")
 
 
