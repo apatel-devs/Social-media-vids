@@ -48,9 +48,32 @@ THE RULES THIS ENCODES (from the account's standing notes)
 * The CTA is never cut down. Avi: it may be sped up or left exactly as is.
   It ships here exactly as is, INCLUDING ITS OWN AUDIO, which is why the
   music is a bed underneath rather than a replacement.
-* Nothing on this account ships silent - music is baked into both the
-  Instagram and the TikTok cut. Trending audio was traded away on this
-  account in exchange for hands-off scheduling.
+* AUDIO POLICY, CHANGED 2026-11-23. The TikTok cut now ships with NO bed
+  track (--no-music) and goes out as a TikTok DRAFT, so Avi adds a trending
+  sound in the app - the same deal Omni has always had. The Instagram cut
+  keeps a music bed.
+
+  Why: he asked for a gasp / "oh my god" over the reaction half. Generated
+  SFX was tried and rejected (Mirelo, 11/21 and 11/23 - it is a sound-effects
+  model and human vocalisation is not what it does). The better answer is
+  TikTok's own trending sounds: they are free, they are already matched to
+  reaction content, using one is itself a ranking signal, and a generated
+  voice over a real woman's face on a close-up - where her mouth is not
+  moving - is the single thing most likely to read as fake on an account
+  whose whole premise is that she is genuinely surprised.
+
+  Instagram keeps the bed because it CANNOT get trending audio here: this
+  account is connected by Instagram login, not Facebook login, so
+  supports_instagram_music is false and platform_configurations.instagram
+  .audio_id is rejected. A silent IG reel underperforms, so the bed stays.
+
+  This supersedes the old rule, kept below for the reasoning:
+    "Nothing on this account ships silent - music is baked into both the
+     Instagram and the TikTok cut. Trending audio was traded away on this
+     account in exchange for hands-off scheduling."
+  That trade no longer holds. Hands-off scheduling was worth more than
+  trending audio when Avi was not posting by hand; he is now, and the
+  TikTok draft route gets the file into the app anyway.
 * Overlay: never over the face or chest, centred at the neck/collar line,
   whole block appears at once, first word capitalised. See amy_caption.py,
   whose numbers were measured off the account's own live grid.
