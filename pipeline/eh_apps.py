@@ -307,12 +307,34 @@ def frame_cover(cov, fdir, out):
 
     title_f = fit_font(d, COVER_TITLE, fdir / "ArchivoBlack.ttf",
                        COVER_TITLE_PX, W - 120)
-    sub_f = fit_font(d, COVER_SUB, fdir / "Inter.ttf", COVER_SUB_PX, W - 160)
+
+    # The subtitle WRAPS; the title does not.
+    #
+    # Until 2026-11-23 the subtitle was shrunk onto one line like the title,
+    # which was fine while subtitles were short ("top 5, all on my phone").
+    # Then Avi asked for "if you were called an ABCD growing up" under a big
+    # title: 37 characters, which shrank to roughly 40px and read as a thin
+    # grey smear under 104px type. Raising COVER_SUB_PX did nothing, because
+    # fit_font shrinks to fit regardless of where it starts - the constraint
+    # was the single line, not the starting size.
+    #
+    # So a long subtitle now wraps to at most two lines at its requested
+    # size, and only shrinks if a single WORD will not fit. The title still
+    # gets the one-line treatment: it is the thing that has to be big, and a
+    # wrapped title would fight the photo.
+    sub_f = ImageFont.truetype(str(fdir / "Inter.ttf"), COVER_SUB_PX)
+    sub_lines = wrapped(d, COVER_SUB, sub_f, W - 160)
+    if len(sub_lines) > 2:
+        sub_f = fit_font(d, COVER_SUB, fdir / "Inter.ttf",
+                         COVER_SUB_PX, W - 160)
+        sub_lines = [COVER_SUB]
 
     y = COVER_TOP
     centred(d, COVER_TITLE, title_f, y, stroke=13)
     y += int(title_f.size * 1.30)
-    centred(d, COVER_SUB, sub_f, y, stroke=8)
+    for ln in sub_lines:
+        centred(d, ln, sub_f, y, stroke=8)
+        y += int(sub_f.size * 1.22)
 
     im.convert("RGB").save(out, quality=95)
     return out
