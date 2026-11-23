@@ -47,6 +47,12 @@ the Dharma Lock and Omni posts on the same hook.
 
 COVER_TITLE = "Top 5 Hindu Apps"
 COVER_SUB = "if you were called an ABCD growing up"
+# The series default is 54px, sized for short subtitles like "top 5, all on
+# my phone". This one is 37 characters, so at 54px it auto-shrinks further to
+# fit 960px and ends up thin and small under a title that is now rendering at
+# the full 104px. 64px gives the second line enough weight to still be read on
+# a phone, which is the whole point of putting the reader's line there.
+COVER_SUB_PX = 64
 
 # rank -> (itunes id, display name, blurb lines, screenshot index, join 1+2,
 #          fraction to crop off the top of the screenshot)
