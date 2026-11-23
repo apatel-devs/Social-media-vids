@@ -21,8 +21,27 @@ THE PACK HAS SEVEN CREATORS, NOT ONE. "100 UGC Reactions Pack",
 Drive folder 1igdcapsIM3DrAaYfGI0zzK0ur6NAVvJi, holds subfolders
 1, 1a, 2, 2a, 3, 4 and 5 - a different person in each.
 
+    1  unexplored    14Uu0hWmhVm2gHPrBubsv25nQ3D-m9hQA
+    1a unexplored    17eQDqR3nUHQazGIHtytxbEUmfLKWzVc3
+    2  "black hair girl"  1T5jdrlncGTuWkFl0pFL87j2kdsNPX-tS  (2a - 2g)
+       - a DIFFERENT woman from folder 3 despite the name. White linen
+         shirt, bright room. Checked on 11/14 before use.
+    2a unexplored    1oerr4-64M7Df7Xl_bpHgD0_VuAYhaZqW
     3  "black hair"  1xIZ4QYAQwHQRBP1MxWeGmqrOdQhHPHqS   (3a - 3j)
     4  "brunette"    1dTt6b76pvJkOGat2JfJRKpYfJRR32urW   (1a - 1w, 23 clips)
+    5  "bob cut"     1j_b7qW38xAKrWRO6KicnwoAUYurOVftl   (1a - 1t+)
+       - fifth woman, lighter hair, striped top, indoors. Framed close
+         like creator 4, so the overlay needs --y 0.64; the default 0.57
+         lands on her chin.
+
+ROTATION LOG - check this before picking a clip:
+    11/08-11/12  folder 3 (3e, 3f part 1, 3f part 2)  <- the three-in-a-row
+                 Avi caught
+    11/12        folder 4, brunette 1a part 1
+    11/14        folder 2, 2a part 1
+    11/19        folder 4, brunette 1b part 1
+    11/21        folder 2, 2a part 2
+    11/23        folder 5, bob cut 1a part 1   (part 2 starts at 4.65s)
 
 Avi, 2026-10-27, said "Start with 3 in order. Don't slip around", and that
 was read as "only ever use 3". By 2026-11-12 three posts running were the
