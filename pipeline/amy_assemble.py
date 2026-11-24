@@ -43,15 +43,35 @@ ROTATION LOG - check this before picking a clip:
     11/21        folder 2, 2a part 2
     11/23        folder 5, bob cut 1a part 1   (part 2 starts at 4.65s)
 
-Avi, 2026-10-27, said "Start with 3 in order. Don't slip around", and that
-was read as "only ever use 3". By 2026-11-12 three posts running were the
-same woman in the same outfit in the same salon, and Avi caught it: "I see
-that you have been using the same reaction for the last 3 posts."
+STAY ON ONE CREATOR UNTIL HER CLIPS RUN OUT. Avi, 2026-11-23: "we can keep
+using same girl till it's exhausted."
 
-So: in order WITHIN a creator, but rotate the creator between posts. Never
-ship two consecutive posts from the same folder, and never the same shoot
-three times. Only folders 3 and 4 have been catalogued; 1, 1a, 2, 2a and 5
-are unexplored.
+CURRENT CREATOR: folder 5, "bob cut". Next clip is 1a PART 2, starting at
+4.65s. Work her folder in order, and only move to another creator when she
+has nothing left.
+
+HOW THIS RULE GOT HERE, BECAUSE IT HAS FLIPPED ONCE ALREADY
+  * 2026-10-27, Avi: "Start with 3 in order. Don't slip around." Read as
+    "only ever use folder 3".
+  * 2026-11-12: three posts running were the same woman in the same outfit
+    in the same salon. Avi: "I see that you have been using the same
+    reaction for the last 3 posts." The rule became rotate creators between
+    posts.
+  * 2026-11-23: asked whether we were running out of clips (we are not -
+    about six source clips used of forty-plus), Avi said to stay on one
+    girl until exhausted.
+
+These are not actually in conflict, and the distinction is the thing to
+keep hold of: what he objected to in November was three posts that LOOKED
+identical - same shoot, same outfit, same room - not the same person
+appearing twice. So staying on one creator is fine; shipping three
+near-identical frames is not. Prefer clips from different shoots within
+her folder where the folder has them, and check the thumbnail against the
+last post before building.
+
+The account is @amysharma_dharma, one name, so one recurring face is also
+the more coherent read of it. Five different women on a singular-name
+account was never a decision anybody made.
 
 CTA clips live in a different folder, 1tm90thYotmpm_XWS9Ath-NNkERAxUM4v,
 as cta 1-5.mp4. Avi picked **cta 1.mp4** on 2026-11-05. Do not swap it
